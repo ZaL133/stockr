@@ -1,16 +1,26 @@
+<script setup>
+import { ref } from 'vue';
+
+const tickr = ref('');
+</script>
+
 <template>
     <div class="about">
-      <h1>This is an about page</h1>
+        <h1>Please enter your stock tickr below</h1>
+        <input v-model="tickr" placeholder="ticker" />
     </div>
-  </template>
+
+    <hr>
+
+    <p>{{ tickr }}</p>
+</template>
   
-  <style>
-  @media (min-width: 1024px) {
+<style>
+@media (min-width: 1024px) {
     .about {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
     }
-  }
-  </style>
-  
+}
+</style>
