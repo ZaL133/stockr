@@ -1,18 +1,21 @@
 <script setup>
+import { VueElement } from 'vue';
 import { ref } from 'vue';
 
 const tickr = ref('');
 </script>
 
 <template>
-    <div class="about">
-        <h1>Please enter your stock tickr below</h1>
-        <input v-model="tickr" placeholder="ticker" />
-    </div>
+    <form @submit="getQuote">
+        <div class="about">
+            <h1>Please enter your stock tickr below</h1>
+            <input v-model="tickr" placeholder="ticker" class="form-control" />
+        </div>
 
-    <hr>
+        <hr>
 
-    <p>{{ tickr }}</p>
+        <p>{{ tickr }}</p>
+    </form>
 </template>
   
 <style>
