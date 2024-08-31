@@ -6,11 +6,20 @@ namespace stockrapi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            var corsPolicyName = "localhost";
             // Add services to the container.
             var apiKey = builder.Configuration["apiKey"];
 
             builder.Services.AddControllers();
+            builder.Services.AddCors(
+                options => 
+                options.AddPolicy(name: corsPolicyName,
+                                  policy =>
+                                  {
+                                      policy.WithOrigins("https://localhost:5173");
+                                      policy.WithOrigins("http://localhost:5173");
+                                  })
+            );
             builder.Services.AddHttpClient();
             builder.Services.AddAutoMapper((x) =>
             {
@@ -32,7 +41,7 @@ namespace stockrapi
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            app.UseCors(corsPolicyName);
 
             app.MapControllers();
 

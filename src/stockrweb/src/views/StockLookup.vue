@@ -3,19 +3,28 @@ import { VueElement } from 'vue';
 import { ref } from 'vue';
 
 const tickr = ref('');
+const data = ref('');
+
+function lookupStock() {
+    if (tickr.value) {
+        fetch(`https://localhost:7239/StockQuote?ticker=${tickr.value}`)
+            .then(r => r.json())
+            .then(data => console.log(data));
+    }
+}
 </script>
 
 <template>
-    <form @submit="getQuote">
-        <div class="about">
-            <h1>Please enter your stock tickr below</h1>
-            <input v-model="tickr" placeholder="ticker" class="form-control" />
-        </div>
+    <div class="about">
+        <h1>Please enter your stock tickr below</h1>
+        <input v-model="tickr" placeholder="ticker" class="form-control" />
+        <button class="btn btn-default" @click="lookupStock">Lookup</button>
+    </div>
 
-        <hr>
+    <hr>
 
-        <p>{{ tickr }}</p>
-    </form>
+    <p>{{ tickr }}</p>
+    <p>{{ data }}</p>
 </template>
   
 <style>
