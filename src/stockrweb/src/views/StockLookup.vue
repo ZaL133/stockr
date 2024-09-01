@@ -1,17 +1,35 @@
-<script setup>
+<script>
 import { VueElement } from 'vue';
 import { ref } from 'vue';
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
 
-const tickr = ref('');
-const data = ref('');
-
-function lookupStock() {
-    if (tickr.value) {
-        fetch(`https://localhost:7239/StockQuote?ticker=${tickr.value}`)
-            .then(r => r.json())
-            .then(d => data.value = d);
+export default {
+    name: "App",
+    components: {
+        AgGridVue, // Add Vue Data Grid component
+    },
+    data() {
+        return {
+            tickr: 'MSFT',
+            data: {}
+        }
+    },
+    setup() { },
+    methods: {
+        lookupStock() {
+            let tickerValue = this.$data.tickr;
+            if (tickerValue) {
+                fetch(`https://localhost:7239/StockQuote/GetStockDetails?ticker=${tickerValue}`)
+                    .then(r => r.json())
+                    .then(d => {
+                        this.$data.data = d;
+                    });
+            }
+        }
     }
-}
+};
 </script>
 
 <template>
@@ -19,18 +37,36 @@ function lookupStock() {
         <div class="about">
             <h1>Please enter your stock tickr below</h1>
             <input v-model="tickr" placeholder="ticker" class="form-control" />
-            <button class="btn btn-default" @click="lookupStock">Lookup</button>
+            <button class="btn" @click="lookupStock">Lookup</button>
         </div>
 
         <hr />
         <div class="row">
             <p>{{ tickr }}</p>
             <div v-if="data">
-                <div class="form-label">Open: </div>
-                <div class="form-control">{{ data.open }}</div>
+                <div>
+                    Open: {{ data.open }}
+                    / High: <span class="green"> {{ data.high }}</span>
+                    / Low: <span class="red">{{ data.low }}</span>
+                </div>
+                <div>
+                    Close: <span :class="(data.close > data.open) ? 'green' : 'red'">{{ data.close }}</span>
+                </div>
             </div>
+
+            <pre>
+                {{ data }}
+            </pre>
         </div>
     </div>
 </template>
   
-<style></style>
+<style scoped>
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+</style>
