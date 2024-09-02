@@ -16,6 +16,13 @@ export default {
             data: {}
         }
     },
+    computed: {
+        lastDay() {
+            if (this.$data.data.aggregateBars && this.$data.data.aggregateBars.resultsCount) {
+                return this.$data.data.aggregateBars.results[this.$data.data.aggregateBars.resultsCount - 1];
+            }
+        }
+    },
     setup() { },
     methods: {
         lookupStock() {
@@ -43,14 +50,17 @@ export default {
         <hr />
         <div class="row">
             <p>{{ tickr }}</p>
-            <div v-if="data">
+            <div v-if="lastDay">
                 <div>
-                    Open: {{ data.open }}
-                    / High: <span class="green"> {{ data.high }}</span>
-                    / Low: <span class="red">{{ data.low }}</span>
+                    <b>Date: </b>{{ (new Date(lastDay.time).toLocaleDateString()) }}
                 </div>
                 <div>
-                    Close: <span :class="(data.close > data.open) ? 'green' : 'red'">{{ data.close }}</span>
+                    Open: {{ lastDay.open }}
+                    / High: <span class="green"> {{ lastDay.high }}</span>
+                    / Low: <span class="red">{{ lastDay.low }}</span>
+                </div>
+                <div>
+                    Close: <span :class="(lastDay.close > lastDay.open) ? 'green' : 'red'">{{ lastDay.close }}</span>
                 </div>
             </div>
 
