@@ -6,6 +6,8 @@ import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the 
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
 
+const localStoragePortfolioKey = "stockr-portfolio";
+
 export default {
     name: "App",
     components: {
@@ -13,9 +15,11 @@ export default {
         SparklineGraph
     },
     data() {
+        let portfolio = JSON.parse(localStorage.getItem(localStoragePortfolioKey) ?? "[]");
         return {
             tickr: 'MSFT',
-            data: {}
+            data: {},
+            portfolio
         }
     },
     computed: {
@@ -49,6 +53,21 @@ export default {
                         this.$data.data = d;
                     });
             }
+        },
+        addToPortfolio() {
+            // Get from ls
+            let portfolioString = localStorage.getItem(localStoragePortfolioKey) ?? "[]";
+            let portfolio = JSON.parse(portfolioString);
+            portfolio.push({
+                tickr: this.$data.tickr
+            });
+
+            // Bound field 
+            this.portfolio = portfolio;
+
+            // Save back to local storage
+            portfolioString = JSON.stringify(portfolio);
+            localStorage.setItem(localStoragePortfolioKey, portfolioString);
         }
     }
 };
@@ -62,9 +81,23 @@ export default {
             <button class="btn" @click="lookupStock">Lookup</button>
         </div>
 
+        <div v-if="portfolio.length > 0">
+            <h2>Portfolio</h2>
+            <div class="p-container">
+                <div v-for="(company, ix) in portfolio" :key="ix" class="p-b">
+                    <button class="btn btn-secondary" @click="{ tickr = company.tickr; lookupStock() }">{{ company.tickr
+                    }}</button>
+                </div>
+            </div>
+        </div>
+
         <hr />
         <div class="row">
-            <p>{{ tickr }}</p>
+            <p>
+                {{ tickr }}
+
+                <button class="btn btn-primary" @click="addToPortfolio">Add to portfolio</button>
+            </p>
             <div v-if="lastDay">
                 <div>
                     <b>Date: </b>{{ (new Date(lastDay.time).toLocaleDateString()) }}
@@ -105,5 +138,14 @@ export default {
 
 .red {
     color: red;
+}
+
+.p-container {
+    display: flex;
+}
+
+.p-b {
+    flex: 1;
+    padding: 5px;
 }
 </style>
