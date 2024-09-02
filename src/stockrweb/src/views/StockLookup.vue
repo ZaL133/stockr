@@ -20,13 +20,20 @@ export default {
     },
     computed: {
         lastDay() {
-            if (this.$data.data.aggregateBars && this.$data.data.aggregateBars.resultsCount) {
-                return this.$data.data.aggregateBars.results[this.$data.data.aggregateBars.resultsCount - 1];
+            if (this.$data.data.dailyBars && this.$data.data.dailyBars.resultsCount) {
+                return this.$data.data.dailyBars.results[this.$data.data.dailyBars.resultsCount - 1];
             }
         },
         dividends() {
             if (this.$data.data.dividends && this.$data.data.dividends.count) {
-                return Array.from(this.$data.data.dividends.results.map(x => x.amount));
+                let amountArray = Array.from(this.$data.data.dividends.results.map(x => x.amount));
+                return amountArray.reverse();
+            }
+            else return [];
+        },
+        monthly() {
+            if (this.$data.data.monthlyBars && this.$data.data.monthlyBars.resultsCount) {
+                return Array.from(this.$data.data.monthlyBars.results.map(x => x.close));
             }
             else return [];
         }
@@ -71,7 +78,17 @@ export default {
                     Close: <span :class="(lastDay.close > lastDay.open) ? 'green' : 'red'">{{ lastDay.close }}</span>
                 </div>
 
-                <SparklineGraph :data="dividends"></SparklineGraph>
+                <!-- Dividendss -->
+                <div>
+                    <h2>Dividend History</h2>
+                    <SparklineGraph :data="dividends"></SparklineGraph>
+                </div>
+
+                <!-- Monthly Bars -->
+                <div>
+                    <h2>Monthly</h2>
+                    <SparklineGraph :data="monthly"></SparklineGraph>
+                </div>
             </div>
 
             <pre>

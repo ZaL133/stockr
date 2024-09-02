@@ -102,10 +102,15 @@ namespace stockrapi.Controllers
             // Populate via the API
             var stockDetails = new StockDetails { Ticker = ticker };
             stockDetails.TickerDetails  = await _client.GetTickerDetailsAsync(ticker);
-            stockDetails.AggregateBars  = await _client.GetAggregatesBarsAsync(ticker,
+            stockDetails.DailyBars  = await _client.GetAggregatesBarsAsync(ticker,
                                                                               multiplier: 1,
                                                                               timespan: "day",
                                                                               from: DateTime.Today.AddDays(-30).ToString("yyyy-MM-dd"),
+                                                                              to: DateTime.Today.ToString("yyyy-MM-dd"));
+            stockDetails.MonthlyBars = await _client.GetAggregatesBarsAsync(ticker,
+                                                                              multiplier: 1,
+                                                                              timespan: "month",
+                                                                              from: DateTime.Today.AddMonths(-24).ToString("yyyy-MM-dd"),
                                                                               to: DateTime.Today.ToString("yyyy-MM-dd"));
             stockDetails.Dividends      = await _client.GetStockDividendsAsync(ticker);
 
