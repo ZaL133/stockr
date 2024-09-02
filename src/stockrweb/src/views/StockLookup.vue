@@ -1,6 +1,7 @@
 <script>
 import { VueElement } from 'vue';
 import { ref } from 'vue';
+import SparklineGraph from '../components/SparklineGraph.vue';
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
@@ -9,6 +10,7 @@ export default {
     name: "App",
     components: {
         AgGridVue, // Add Vue Data Grid component
+        SparklineGraph
     },
     data() {
         return {
@@ -21,6 +23,12 @@ export default {
             if (this.$data.data.aggregateBars && this.$data.data.aggregateBars.resultsCount) {
                 return this.$data.data.aggregateBars.results[this.$data.data.aggregateBars.resultsCount - 1];
             }
+        },
+        dividends() {
+            if (this.$data.data.dividends && this.$data.data.dividends.count) {
+                return Array.from(this.$data.data.dividends.results.map(x => x.amount));
+            }
+            else return [];
         }
     },
     setup() { },
@@ -62,6 +70,8 @@ export default {
                 <div>
                     Close: <span :class="(lastDay.close > lastDay.open) ? 'green' : 'red'">{{ lastDay.close }}</span>
                 </div>
+
+                <SparklineGraph :data="dividends"></SparklineGraph>
             </div>
 
             <pre>
